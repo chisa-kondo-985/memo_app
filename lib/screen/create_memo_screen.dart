@@ -10,13 +10,13 @@ class CreateMemoScreen extends StatefulWidget {
 
 class _CreateMemoScreenState extends State {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  final titleController = TextEditingController();
-  final contentController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _contentController = TextEditingController();
 
   @override
   void dispose() {
-    titleController.dispose();
-    contentController.dispose();
+    _titleController.dispose();
+    _contentController.dispose();
     super.dispose();
   }
 
@@ -25,7 +25,6 @@ class _CreateMemoScreenState extends State {
   //   if (_formKey.currentState!.validate()) {
   //     _formKey.currentState!.save();
   //     final addDatabase = AddDatabase();
-  //     //TODO:
   //     final result = await addDatabase.addItem(contentController.text, titleController.text);
   //     Navigator.of(context).pop(result);
   //   }
@@ -34,6 +33,7 @@ class _CreateMemoScreenState extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // ===== Application Bar =====
       appBar: AppBar(
         leadingWidth: 120,
         leading: GestureDetector(
@@ -54,7 +54,7 @@ class _CreateMemoScreenState extends State {
                 ),
                 Flexible(
                   child: Text(
-                    'notes',
+                    'Notes',
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.amber,
@@ -65,7 +65,20 @@ class _CreateMemoScreenState extends State {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                final addDatabase = AddDatabase();
+                addDatabase.addItem(_contentController.text, _titleController.text);
+              }
+            },
+          ),
+        ],
       ),
+      // ===== Application Body =====
       body: Form(
         key: _formKey,
         child: Container(
@@ -74,7 +87,7 @@ class _CreateMemoScreenState extends State {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                controller: titleController,
+                controller: _titleController,
                 style: const TextStyle(fontSize: 28),
                 decoration: InputDecoration.collapsed(
                   hintText: 'タイトル',
@@ -91,22 +104,13 @@ class _CreateMemoScreenState extends State {
                 height: 10,
               ),
               TextFormField(
-                controller: contentController,
+                controller: _contentController,
                 style: const TextStyle(fontSize: 16),
                 decoration: InputDecoration.collapsed(
                   hintText: 'コンテンツ',
                   hintStyle: TextStyle(color: Colors.grey.shade300),
                 ),
               ),
-              ElevatedButton(
-                  child: const Text('送信'),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      final addDatabase = AddDatabase();
-                      addDatabase.addItem(contentController.text, titleController.text);
-                    }
-                  }),
             ],
           ),
         ),
