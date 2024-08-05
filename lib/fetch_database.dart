@@ -88,7 +88,7 @@ class FetchDatabase {
         }
 
         // For Debugging
-        debugPrint('getPinnedItems: Response received');
+        debugPrint('getNormalItems: Response received');
         return databaseData;
       } else {
         // For Debugging

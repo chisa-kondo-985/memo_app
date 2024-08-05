@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:memo_app/custom_future_builder.dart';
 import 'package:memo_app/fetch_database.dart';
-import 'package:memo_app/model/failure_model.dart';
 import 'package:memo_app/model/item_model.dart';
 import 'package:memo_app/screen/create_memo_screen.dart';
-import 'package:memo_app/screen/edit_memo_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,12 +23,20 @@ class _HomeScreenState extends State {
     _futureNormalItems = FetchDatabase().getNormalItems();
   }
 
-  // Refresh data from Notion database by using http connection.
-  void _refreshItems() {
+  // Update and get data from Notion database by using http connection.
+  Future<List<Item>> updateAndGetPinnedItemsList() async {
+    return await FetchDatabase().getPinnedItems();
+  }
+
+  Future<List<Item>> updateAndGetNormalList() async {
+    return await FetchDatabase().getNormalItems();
+  }
+
+  // Refresh List items.
+  void refreshItems() {
     setState(() {
-      // TODO: 値を更新した後に、futureが再構築されない。リストが更新されない。
-      _futurePinnedItems = FetchDatabase().getPinnedItems();
-      _futureNormalItems = FetchDatabase().getNormalItems();
+      _futurePinnedItems = updateAndGetPinnedItemsList();
+      _futureNormalItems = updateAndGetNormalList();
     });
   }
 
@@ -38,154 +45,58 @@ class _HomeScreenState extends State {
     return Scaffold(
       // ===== Application Bar =====
       appBar: AppBar(
-        title: const Text('Memo'),
+        title: const Text(
+          'All Memos',
+          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color.fromARGB(255, 239, 239, 244),
+        toolbarHeight: 70,
       ),
       // ===== Application Body =====
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsetsDirectional.symmetric(horizontal: 16, vertical: 4),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ===== Pinned Memos ListView =====
-            const Text(
-              'Pinned',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Flexible(
-              child: FutureBuilder<List<Item>>(
-                future: _futurePinnedItems,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final items = snapshot.data!;
-                    // For Debugging
-                    debugPrint('FutureBuilder: Data received - ${items.length} items');
-
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      child: ListView.separated(
-                        itemCount: items.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final item = items[index];
-                          // TODO: 左にスワイプしたら、削除できるようにする
-                          return ListTile(
-                            title: Text(
-                              item.title,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(item.content),
-                            trailing: const Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            ),
-                            // Tap each ListTile, then open the screen for editing memo.
-                            // And after go back to this page, refresh ListView data.
-                            onTap: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditMemoScreen(item: item),
-                                ),
-                              );
-                              // TODO: 値を更新した後に、futureが再構築されない。リストが更新されない。
-                              _refreshItems();
-                            },
-                          );
-                        },
-                        shrinkWrap: true,
-                        separatorBuilder: (BuildContext context, int index) {
-                          return Container(color: Colors.grey.shade300, height: 2);
-                        },
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    final failure = snapshot.error as RequestFailure;
-                    // For Debugging
-                    debugPrint('FutureBuilder: Error - ${failure.message}');
-                    return Center(child: Text(failure.message));
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
+            CustomFutureBuilder(
+              future: _futurePinnedItems,
+              refreshItems: refreshItems,
+              listTitle: 'Pinned',
+              listIcon: const Icon(Icons.favorite, color: Colors.red),
             ),
             const SizedBox(height: 30),
             // ===== Other Memos ListView =====
-            const Text(
-              'Other',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            CustomFutureBuilder(
+              future: _futureNormalItems,
+              refreshItems: refreshItems,
+              listTitle: 'Other',
+              listIcon: const Icon(Icons.favorite_border),
             ),
-            Flexible(
-              child: FutureBuilder<List<Item>>(
-                future: _futureNormalItems,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final items = snapshot.data!;
-
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      child: ListView.separated(
-                        itemCount: items.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final item = items[index];
-                          return ListTile(
-                            title: Text(
-                              item.title,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(item.content),
-                            trailing: const Icon(Icons.favorite_border),
-                            // Tap each ListTile, then open the screen for editing memo.
-                            onTap: () async {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditMemoScreen(item: item),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        shrinkWrap: true,
-                        separatorBuilder: (BuildContext context, int index) {
-                          return Container(color: Colors.grey.shade300, height: 2);
-                        },
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    final failure = snapshot.error as RequestFailure;
-
-                    return Center(child: Text(failure.message));
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
-            ),
+            const SizedBox(height: 50),
           ],
         ),
       ),
       // ===== Floating Action Button =====
-      floatingActionButton: FloatingActionButton(
-        // Tap this floating button, go to the screen for creating the new memo.
-        // And after go back to this page, refresh ListView data.
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const CreateMemoScreen(),
-            ),
-          );
-          _refreshItems();
-        },
-        child: const Icon(
-          Icons.note_add,
+      floatingActionButton: SizedBox(
+        width: 80.0,
+        height: 80.0,
+        child: FloatingActionButton(
+          // Tap this floating button, go to the screen for creating the new memo.
+          // And wait the process until go back to this page.
+          // After go back to this page, refresh ListView data.
+          onPressed: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const CreateMemoScreen(),
+              ),
+            );
+            refreshItems();
+          },
+          foregroundColor: Colors.amber,
+          backgroundColor: Colors.white,
+          elevation: 4,
+          child: const Icon(Icons.note_add, size: 36),
         ),
       ),
       // ===== App Body's Background Color =====

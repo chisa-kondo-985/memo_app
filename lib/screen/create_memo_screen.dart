@@ -110,6 +110,7 @@ class _CreateMemoScreenState extends State {
                   hintText: 'コンテンツ',
                   hintStyle: TextStyle(color: Colors.grey.shade300),
                 ),
+                maxLines: null,
               ),
             ],
           ),

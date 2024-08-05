@@ -22,3 +22,4 @@ PSP 株式会社の Flutter 最終課題として、メモアプリを開発し�
 - [【（日本語版）Notion API】データベースを更新](https://rhgc0kvlw3.apidog.io/api-3509400)
 - [ISO8601 について](https://zenn.dev/yass97/articles/2b5dcd5499ab07)
 - [【Dart】今日の日付を yyyy-mm-dd 形式取得](https://zenn.dev/iwaku/articles/2020-10-30-iwaku)
+- [Usage of FutureBuilder with setState](https://stackoverflow.com/questions/52021205/usage-of-futurebuilder-with-setstate)

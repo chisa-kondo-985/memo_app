@@ -79,14 +79,14 @@ class _EditMemoScreenState extends State<EditMemoScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.favorite_border),
-            // TODO: ハートを押したら、お気に入りにできるようにする
-            onPressed: () {},
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.favorite_border),
+          //   // TODO: ハートを押したら、お気に入りにできるようにする
+          //   onPressed: () {},
+          // ),
           // Tap save button, send patch request and update the Notion database.
           IconButton(
-            icon: const Icon(Icons.save),
+            icon: const Icon(Icons.save, color: Colors.amber),
             onPressed: () {
               final updateDatabase = UpdateDatabase();
               updateDatabase.updateItem(_pageId, _contentController.text, _isChecked, _titleController.text);
@@ -124,20 +124,6 @@ class _EditMemoScreenState extends State<EditMemoScreen> {
                 hintStyle: TextStyle(color: Colors.grey.shade300),
               ),
               maxLines: null,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Checkbox(
-                  value: _isChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _isChecked = value ?? false;
-                    });
-                  },
-                ),
-                const Text('Checked'),
-              ],
             ),
           ],
         ),

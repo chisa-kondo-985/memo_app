@@ -50,13 +50,16 @@ class UpdateDatabase {
       );
 
       if (response.statusCode == 200) {
+        // For Debugging
         debugPrint('Memo updated successfully');
         return true;
       } else {
+        // For Debugging
         debugPrint('Failed to update memo: ${response.statusCode} ${response.body}');
         return false;
       }
     } catch (error) {
+      // For Debugging
       debugPrint('Exception caught: $error');
       return false;
     }
