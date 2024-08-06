@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memo_app/add_database.dart';
+import 'package:memo_app/services/add_database.dart';
 
 class CreateMemoScreen extends StatefulWidget {
   const CreateMemoScreen({super.key});
@@ -20,25 +20,14 @@ class _CreateMemoScreenState extends State {
     super.dispose();
   }
 
-  // // TODO: 登録前に前の画面に戻っているので、前の画面でsetStateしても更新前の値が読み込まれている
-  // void _submitForm() async {
-  //   if (_formKey.currentState!.validate()) {
-  //     _formKey.currentState!.save();
-  //     final addDatabase = AddDatabase();
-  //     final result = await addDatabase.addItem(contentController.text, titleController.text);
-  //     Navigator.of(context).pop(result);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // ===== Application Bar =====
       appBar: AppBar(
+        // ===== Back button =====
         leadingWidth: 120,
         leading: GestureDetector(
-          // TODO: 前の画面に戻る時に画面を読み込み直す処理をつけるか考える
-          // onTap: _submitForm,
           onTap: () {
             Navigator.of(context).pop();
           },
@@ -65,6 +54,7 @@ class _CreateMemoScreenState extends State {
             ),
           ),
         ),
+        // ===== Save button =====
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -78,7 +68,7 @@ class _CreateMemoScreenState extends State {
           ),
         ],
       ),
-      // ===== Application Body =====
+      // ===== Memo Screen =====
       body: Form(
         key: _formKey,
         child: Container(

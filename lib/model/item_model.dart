@@ -3,7 +3,6 @@ class Item {
   final DateTime lastEditedTime;
   final String title;
   final String content;
-  final String checkboxId;
   final bool isChecked;
 
   const Item({
@@ -11,7 +10,6 @@ class Item {
     required this.lastEditedTime,
     required this.title,
     required this.content,
-    required this.checkboxId,
     required this.isChecked,
   });
 
@@ -22,7 +20,6 @@ class Item {
       lastEditedTime: DateTime.parse(map['last_edited_time']),
       title: properties['タイトル']?['title']?[0]?['text']?['content'] ?? '',
       content: properties['内容']?['rich_text']?[0]?['text']?['content'] ?? '',
-      checkboxId: properties['チェックボックス']?['id'],
       isChecked: properties['チェックボックス']?['checkbox'],
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:memo_app/custom_future_builder.dart';
-import 'package:memo_app/fetch_database.dart';
+import 'package:memo_app/base/custom_future_builder.dart';
+import 'package:memo_app/services/fetch_database.dart';
 import 'package:memo_app/model/item_model.dart';
 import 'package:memo_app/screen/create_memo_screen.dart';
 
@@ -11,7 +11,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State {
+class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Item>> _futurePinnedItems;
   late Future<List<Item>> _futureNormalItems;
 
@@ -87,9 +87,7 @@ class _HomeScreenState extends State {
           onPressed: () async {
             await Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const CreateMemoScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const CreateMemoScreen()),
             );
             refreshItems();
           },

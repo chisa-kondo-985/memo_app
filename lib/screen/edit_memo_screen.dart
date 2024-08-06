@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:memo_app/model/item_model.dart';
-import 'package:memo_app/update_database.dart';
+import 'package:memo_app/services/update_database.dart';
 
 class EditMemoScreen extends StatefulWidget {
   final Item item;
@@ -16,13 +16,12 @@ class _EditMemoScreenState extends State<EditMemoScreen> {
   late TextEditingController _contentController;
   late bool _isChecked;
   late String _pageId;
-  late DateTime lastEditedTime;
-  late String date;
+  late String _date;
 
   @override
   void initState() {
     super.initState();
-    // Set memo title and texts saved in the database.
+    // Set memo title and texts which were saved in the database.
     _titleController = TextEditingController(text: widget.item.title);
     _contentController = TextEditingController(text: widget.item.content);
     // Set checkbox's value.
@@ -31,9 +30,9 @@ class _EditMemoScreenState extends State<EditMemoScreen> {
     _pageId = widget.item.pageId;
 
     // Convert lastEditedTime from DateTime to String.
-    lastEditedTime = widget.item.lastEditedTime;
+    final DateTime lastEditedTime = widget.item.lastEditedTime;
     DateFormat outputFormat = DateFormat('yyyy-MM-dd');
-    date = outputFormat.format(lastEditedTime);
+    _date = outputFormat.format(lastEditedTime);
   }
 
   @override
@@ -48,12 +47,11 @@ class _EditMemoScreenState extends State<EditMemoScreen> {
     return Scaffold(
       // ===== Application Bar =====
       appBar: AppBar(
+        // ===== Back button =====
         leadingWidth: 120,
         leading: GestureDetector(
-          // TODO: 前の画面に戻る時に画面を読み込み直す処理をつけるか考える
-          // onTap: _submitForm,
           onTap: () {
-            Navigator.of(context).pop(true);
+            Navigator.of(context).pop();
           },
           child: Container(
             width: 100,
@@ -78,12 +76,8 @@ class _EditMemoScreenState extends State<EditMemoScreen> {
             ),
           ),
         ),
+        // ===== Save button =====
         actions: [
-          // IconButton(
-          //   icon: const Icon(Icons.favorite_border),
-          //   // TODO: ハートを押したら、お気に入りにできるようにする
-          //   onPressed: () {},
-          // ),
           // Tap save button, send patch request and update the Notion database.
           IconButton(
             icon: const Icon(Icons.save, color: Colors.amber),
@@ -94,14 +88,14 @@ class _EditMemoScreenState extends State<EditMemoScreen> {
           ),
         ],
       ),
-      // ===== Application Body =====
+      // ===== Memo Screen =====
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Last Edit: $date',
+              'Last Edit: $_date',
               style: const TextStyle(color: Colors.black26),
             ),
             const SizedBox(height: 4),
