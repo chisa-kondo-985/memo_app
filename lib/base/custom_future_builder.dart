@@ -26,8 +26,6 @@ class CustomFutureBuilder extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final items = snapshot.data!;
-          // For Debugging
-          debugPrint('FutureBuilder: Data received - ${items.length} items');
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,6 +42,11 @@ class CustomFutureBuilder extends StatelessWidget {
                 ),
                 // ===== Memo List View =====
                 child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Container(color: Colors.grey.shade300, height: 2);
+                  },
                   itemCount: items.length,
                   itemBuilder: (BuildContext context, int index) {
                     final item = items[index];
@@ -144,11 +147,6 @@ class CustomFutureBuilder extends StatelessWidget {
                         },
                       ),
                     );
-                  },
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Container(color: Colors.grey.shade300, height: 2);
                   },
                 ),
               ),

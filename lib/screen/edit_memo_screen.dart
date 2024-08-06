@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:memo_app/base/base_memo_screen.dart';
 import 'package:memo_app/model/item_model.dart';
 import 'package:memo_app/services/update_database.dart';
 
-class EditMemoScreen extends StatefulWidget {
+class EditMemoScreen extends BaseMemoScreen {
   final Item item;
   const EditMemoScreen({super.key, required this.item});
 
@@ -11,9 +12,7 @@ class EditMemoScreen extends StatefulWidget {
   _EditMemoScreenState createState() => _EditMemoScreenState();
 }
 
-class _EditMemoScreenState extends State<EditMemoScreen> {
-  late TextEditingController _titleController;
-  late TextEditingController _contentController;
+class _EditMemoScreenState extends BaseMemoScreenState {
   late bool _isChecked;
   late String _pageId;
   late String _date;
@@ -22,106 +21,39 @@ class _EditMemoScreenState extends State<EditMemoScreen> {
   void initState() {
     super.initState();
     // Set memo title and texts which were saved in the database.
-    _titleController = TextEditingController(text: widget.item.title);
-    _contentController = TextEditingController(text: widget.item.content);
+    titleController = TextEditingController(text: (widget as EditMemoScreen).item.title);
+    contentController = TextEditingController(text: (widget as EditMemoScreen).item.content);
     // Set checkbox's value.
-    _isChecked = widget.item.isChecked;
+    _isChecked = (widget as EditMemoScreen).item.isChecked;
     // Set item's pageId.
-    _pageId = widget.item.pageId;
+    _pageId = (widget as EditMemoScreen).item.pageId;
 
     // Convert lastEditedTime from DateTime to String.
-    final DateTime lastEditedTime = widget.item.lastEditedTime;
+    final DateTime lastEditedTime = (widget as EditMemoScreen).item.lastEditedTime;
     DateFormat outputFormat = DateFormat('yyyy-MM-dd');
     _date = outputFormat.format(lastEditedTime);
   }
 
+  // If the form validation is ok, update this memo to Notion database via http connection.
   @override
-  void dispose() {
-    _titleController.dispose();
-    _contentController.dispose();
-    super.dispose();
+  void saveButtonFunction() {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      final updateDatabase = UpdateDatabase();
+      updateDatabase.updateItem(_pageId, contentController.text, _isChecked, titleController.text);
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // ===== Application Bar =====
-      appBar: AppBar(
-        // ===== Back button =====
-        leadingWidth: 120,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: Container(
-            width: 100,
-            color: Colors.transparent,
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.navigate_before_rounded,
-                  color: Colors.amber,
-                  size: 40,
-                ),
-                Flexible(
-                  child: Text(
-                    'Notes',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.amber,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        // ===== Save button =====
-        actions: [
-          // Tap save button, send patch request and update the Notion database.
-          IconButton(
-            icon: const Icon(Icons.save, color: Colors.amber),
-            onPressed: () {
-              final updateDatabase = UpdateDatabase();
-              updateDatabase.updateItem(_pageId, _contentController.text, _isChecked, _titleController.text);
-            },
-          ),
-        ],
-      ),
-      // ===== Memo Screen =====
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Last Edit: $_date',
-              style: const TextStyle(color: Colors.black26),
-            ),
-            const SizedBox(height: 4),
-            TextField(
-              controller: _titleController,
-              style: const TextStyle(fontSize: 28),
-              decoration: InputDecoration.collapsed(
-                hintText: 'タイトル',
-                hintStyle: TextStyle(color: Colors.grey.shade300),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              controller: _contentController,
-              style: const TextStyle(fontSize: 16),
-              decoration: InputDecoration.collapsed(
-                hintText: 'コンテンツ',
-                hintStyle: TextStyle(color: Colors.grey.shade300),
-              ),
-              maxLines: null,
-            ),
-          ],
-        ),
-      ),
-    );
+  List<Widget> memoScreen() {
+    return [
+      // ===== Last Edit Date =====
+      Text('Last Edit: $_date', style: const TextStyle(color: Colors.black26)),
+      const SizedBox(height: 4),
+      // ===== Memo body =====
+      titleField(),
+      const SizedBox(height: 10),
+      contentField(),
+    ];
   }
 }

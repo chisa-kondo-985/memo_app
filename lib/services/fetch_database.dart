@@ -31,8 +31,6 @@ class FetchDatabase extends DatabaseService {
           databaseData.add(Item.fromMap(value));
         }
 
-        // For Debugging
-        debugPrint('getPinnedItems: Response received');
         return databaseData;
       } else {
         throw ResponseResult(
