@@ -165,9 +165,11 @@ class CustomFutureBuilder extends StatelessWidget {
               ),
             ],
           );
+          // If some error occur, show the message and debug info.
         } else if (snapshot.hasError) {
           final failure = snapshot.error as ResponseResult;
-          return Center(child: Text(failure.message));
+          return Column(children: [Text(failure.message), Text(failure.debugInfo)]);
+          // Show the circular progress indicator.
         } else {
           return const Center(child: CircularProgressIndicator());
         }

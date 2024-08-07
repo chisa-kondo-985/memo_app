@@ -16,8 +16,11 @@ class FetchDatabase extends DatabaseService {
         body: json.encode({
           'filter': {
             'property': 'チェックボックス',
-            'checkbox': {'equals': isPinned}
-          }
+            'checkbox': {'equals': isPinned},
+          },
+          'sorts': [
+            {'timestamp': 'last_edited_time', 'direction': 'descending'}
+          ]
         }),
       );
 
