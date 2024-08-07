@@ -30,9 +30,13 @@ class CustomFutureBuilder extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                listTitle,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              // ===== List View Title =====
+              Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: Text(
+                  listTitle,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
               // Decide the list design.
               Container(
@@ -52,8 +56,9 @@ class CustomFutureBuilder extends StatelessWidget {
                     final item = items[index];
                     // If the user swap each list tile from right to left, The confirming alert will appear.
                     // The user answer "Delete", then delete the data from Notion database.
-                    // The user answer "Cancel"m then go back to the home screen.
+                    // The user answer "Cancel", then go back to the home screen.
                     return Dismissible(
+                      // ===== Swap listTile Background =====
                       background: Container(
                           color: Colors.red,
                           child: const Align(
@@ -79,12 +84,14 @@ class CustomFutureBuilder extends StatelessWidget {
                               ],
                             ),
                           )),
+                      // Notion database page is unique key for Dismissible class.
                       key: ValueKey(item.pageId),
                       confirmDismiss: (direction) async {
                         if (direction == DismissDirection.endToStart) {
                           final result = await showDialog(
                               context: context,
                               builder: (BuildContext context) {
+                                // ===== Swap listTile Dialog =====
                                 return AlertDialog(
                                   content: Text("Are you sure you want to delete「${item.title}」?"),
                                   actions: <Widget>[
@@ -121,8 +128,14 @@ class CustomFutureBuilder extends StatelessWidget {
                         title: Text(
                           item.title,
                           style: const TextStyle(fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        subtitle: Text(item.content),
+                        subtitle: Text(
+                          item.content,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         // Tap the heart icon, change the checkbox status.
                         // And update the data in the Notion database and refresh memo lists.
                         trailing: IconButton(
