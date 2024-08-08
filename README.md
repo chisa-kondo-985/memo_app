@@ -11,6 +11,7 @@ PSP 株式会社の Flutter 最終課題として、メモアプリを開発し�
 
 ### App
 
+- [先輩の池田さんのアプリ設計書](https://psp.sharepoint.com/:p:/s/msteams_9bde76/EQco7eODLl9NsC9xfKrtXC0Bx26h41W4Akyy096oJfmjbw?e=fgQr6B)
 - [Flutter Budget Tracker with Notion API Tutorial | Apps From Scratch](https://www.youtube.com/watch?v=3vhWx2LT-SY)
 
 ### Notion API
@@ -36,6 +37,12 @@ PSP 株式会社の Flutter 最終課題として、メモアプリを開発し�
 - その他
   - [Filter database entries](https://developers.notion.com/reference/post-database-query-filter)
   - [【（日本語版）Notion API】データベースを更新](https://rhgc0kvlw3.apidog.io/api-3509400)
+
+### Design
+
+- [Apple Store Notes](https://apps.apple.com/us/app/notes/id1110145109)
+- [Yandex 360](https://www.behance.net/gallery/203528637/Yandex-360?tracking_source=search_projects|notes+app&l=0)
+- [Notes App Concept for iPhone](https://www.behance.net/gallery/119574035/Notes-App-Concept-for-iPhone?tracking_source=search_projects|notes+app&l=22)
 
 ### Other
 
